@@ -3,18 +3,34 @@ $(".galleryZoom").hide();
 gallery = $(".galleryZoom").find(".imgBox");
 
 actualImg = 0;
-lastImg = 0;
+lastImg = -1;
 gallerySize = gallery.length;
 
 function setImage(actualImg, animate = true){
     if (animate == true){
         last = $(".galleryZoom").find("#"+gallery[lastImg].id);
         current = $(".galleryZoom").find("#"+gallery[actualImg].id);
-        if(lastImg > );
-        current.animate({left:"100%"}, 0);
-        last.animate({left:"-100%"}, 200);
-        current.animate({left:"0"}, 200);
-        current.show();
+        if(lastImg < actualImg){
+            current.animate({left:"100%"}, 0);
+            last.animate({left:"-100%"}, 100);
+            current.animate({left:"0"}, 100, ()=>{
+                setTimeout(()=>{
+                    last.animate({left:"0"}, 0);
+                    last.hide()
+                }, 100);
+            });
+            current.show();
+        }else{
+            current.animate({left:"-100%"}, 0);
+            last.animate({left:"100%"}, 100);
+            current.animate({left:"0"}, 100, ()=>{
+                setTimeout(()=>{
+                    last.animate({left:"0"}, 0);
+                    last.hide()
+                }, 100);
+            });
+            current.show();
+        }
     }else{
         for(i=0; i<gallery.length; i++){
             if(actualImg == gallery[i].id) $(".galleryZoom").find("#"+gallery[i].id).show();
@@ -26,7 +42,7 @@ function setImage(actualImg, animate = true){
 
 $(".gallery img").on("click", function(){
     $(".galleryZoom").show();
-    actualImg = this.id;
+    actualImg = parseInt(this.id);
     setImage(actualImg, animate = false);
     setArrows(actualImg);
 })
@@ -64,3 +80,8 @@ $(".galleryZoom .arrow.right").on("click", ()=>{
     if(actualImg+1 < gallerySize) actualImg++;
     setImage(actualImg);
 })
+
+$(document).on("keydown", function(event) {
+    if (event.keyCode === 27) {
+      $(".galleryZoom .close").click();
+    }});
